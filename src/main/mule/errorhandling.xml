@@ -1,0 +1,137 @@
+<!-- [STUDIO:"On Error Propagate"]<?xml version="1.0" encoding="UTF-8"?> [STUDIO] -->
+
+<mule xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd">
+	<error-handler name="errorhandlingError_Handler" doc:id="d252dee4-ab13-4770-b1a9-33fc4a7eb5e4" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f3fc129e-8829-4ca1-b240-a02a6d59ccae" type="APIKIT:METHOD_NOT_ALLOWED">
+			<ee:transform doc:name="Transform Message" doc:id="b428fd63-08e5-461d-bf14-4badaa909427" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"MESSAGE": "METHOD NOT FOUND"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8c348cea-6e95-402d-a6d9-0b915f2b7c93" type="APIKIT:NOT_ACCEPTABLE">
+			<ee:transform doc:name="Transform Message" doc:id="cbb619d0-3ae4-4aec-97a2-e51535ba004d" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+
+"MESSAGE": "NOT ACCEPTABLE"
+
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="103aca5c-5098-4664-ae21-d6ec94a1be1e" type="APIKIT:NOT_FOUND">
+			<ee:transform doc:name="Transform Message" doc:id="b9702469-712f-4fb8-addd-a7366d0ca038" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"MESSAGE" : "NOT FOUND"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="297b93d4-26ea-4a47-b9b0-e49119d49ad0" type="APIKIT:BAD_REQUEST">
+			<ee:transform doc:name="Transform Message" doc:id="ed6fe255-0d07-42c6-a086-beaefc490f9b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"MESSAGE" : "BAD REQUEST"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3e490bb4-f14f-4627-8fe1-f458df5d87cd" type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+			<ee:transform doc:name="Transform Message" doc:id="277003fa-8b93-4e1c-94b9-fce26a317aa0" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"MESSAGE":"UNSUPPORTED MEDIA TYPE"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e5ed993e-83a6-4571-8d0c-e0c3c1535327" type="APIKIT:NOT_IMPLEMENTED">
+			<ee:transform doc:name="Transform Message" doc:id="6154298a-e3bf-42b8-9799-d0d0c91905d8" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"MESSAGE" : "NOT IMPLEMENTED"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="13b4c11b-145c-41e6-942e-81533517e5de" type="ANY">
+			<ee:transform doc:name="Create incident" doc:id="c286faf7-04bd-4cea-a2c7-19c9c29e6fec" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.service-now.com/incident
+---
+{
+	ns0#insert: {
+		caller_id: "anithad11.28@gmail.com",
+		comments: "Please check the errors",
+		short_description: "Error in flows",
+		state: "New"
+	}
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<servicenow:invoke doc:name="Invoke" doc:id="6cff94a7-7bbb-4e5a-b362-8392f82accd9" config-ref="ServiceNow_Config" service="incident" operation="insert" showReferenceValues="ALL"/>
+			<ee:transform doc:name="Transforming Message to json" doc:id="119b307e-0f8f-42c1-86cf-69dbf9aa9351" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="409a1392-8dc2-4420-9d70-baedf990877d" type="HTTP:CONNECTIVITY">
+			<ee:transform doc:name="Transform Message" doc:id="20f36ec0-1693-48b2-8a30-ea06fb5673d2" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message":"HTTP connectivity error"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="89bdd0fe-e807-41c7-a53c-7658f38a60b1" type="DB:CONNECTIVITY">
+			<ee:transform doc:name="Transform Message" doc:id="83ddf43c-8b70-4d10-b06f-009a95149667" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "DB CONNECTIVITY ERROR"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>
+	

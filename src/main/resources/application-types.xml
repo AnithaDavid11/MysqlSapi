@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="subscription" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#2298e1ce-da89-43e0-84bc-8f14d386e7f7"/>
+  <types:enrichment select="#b7a2ec3f-bbcf-4998-b446-01ab82586fbe"/>
+</types:mule>

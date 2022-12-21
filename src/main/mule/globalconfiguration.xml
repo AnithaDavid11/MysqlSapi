@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	 <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="772324c6-35fc-4db5-aedb-224cb1071e37" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="9f48cae7-d6fb-4185-aad8-726c49d11637" environment="${mule.env}" />
+	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="cf102885-db8d-42c9-9530-857fb8ce00d3" name="mysql-systemapi-config" api="mysql-systemapi.raml"/>
+	<servicenow:config name="ServiceNow_Config" doc:name="ServiceNow Config" doc:id="2e69bc9f-356b-47af-b094-679d94562057" >
+		<servicenow:basic-connection username="admin" password="${secure::service.password}" serviceNowVersion="PARIS" serviceAddress="https://dev144027.service-now.com"/>
+	</servicenow:config>
+	<secure-properties:config name="Secure_Properties_Config1" doc:name="Secure Properties Config" doc:id="657a1416-0098-4989-bda3-2dfd8df7e367" file="${mule-env}-config1.yaml" key="${key1}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<global-property doc:name="Global Property" doc:id="9c35ae4c-8385-4a71-92f1-e71838b5f56a" name="key1" value="servicenow" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="7558e906-fd32-4d46-b1bf-ed5697106fcd" file="${mule-env}-config.yaml" key="${key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<global-property doc:name="Global Property" doc:id="0caaca04-249d-4882-ba09-3ddd07608c1c" name="mule-env" value="dev" />
+	<global-property doc:name="Global Property" doc:id="6a79f0fa-ef3f-4991-945c-328593091bc0" name="key" value="mysql" />
+	<configuration-properties doc:name="Configuration properties" doc:id="4415852e-5cd4-4081-8976-bd1a566046e5" file="${mule-env}-config.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="d425e695-8ba2-493d-b617-dce85089674f" file="${mule-env}-config.yaml" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="5e16bb9a-edcd-4cf6-bc15-ac815a97d04d" >
+		<db:my-sql-connection host="${secure::db.host}" port="${secure::db.port}" user="${secure::db.user}" password="${secure::db.password}" database="${secure::db.database}" />
+	</db:config>
+	<api-gateway:autodiscovery apiId="18359196" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0d6997cd-70ee-41cd-bd87-e4add1d0406d" flowRef="mysql-systemapi-main" />
+
+    
+	</mule>

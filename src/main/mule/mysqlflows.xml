@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="userFlow" doc:id="0b754e07-8359-4fc0-88ea-8265b977b67e" >
+		<json-logger:logger doc:name="Start Logger" doc:id="f3d7b196-d1b8-4c14-ab17-6f6be35aa733" config-ref="JSON_Logger_Config" message="Start Logger"/>
+		<db:insert doc:name="Inserting user details" doc:id="4605c0c5-82d9-46dd-8e8a-ba5652772bbe" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into nrs.USER(USER_ID,EMAIL_ID,STATUS_TYPE_ID,FIRST_NAME,LAST_NAME,PHONE_NUMBER)values(:USER_ID,:EMAIL_ID,:STATUS_TYPE_ID,:FIRST_NAME,:LAST_NAME,:PHONE_NUMBER)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+USER_ID : payload.USER_ID,
+EMAIL_ID: payload.EMAIL_ID,
+STATUS_TYPE_ID: payload.STATUS_TYPE_ID,
+FIRST_NAME :payload.FIRST_NAME,
+LAST_NAME :payload.LAST_NAME,
+PHONE_NUMBER : payload.PHONE_NUMBER
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform to json with message" doc:id="775f303b-c78a-41e3-9641-0a616a025743" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "You have login into your account successfully"
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="962fb7a5-acb0-4fb0-b9f1-671195fedbbb" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END"/>
+	</flow>
+	<flow name="updateuserFlow" doc:id="363e9575-20f6-47f4-a01a-8ba79bba91c3" >
+		<json-logger:logger doc:name="Start Logger" doc:id="3f86d932-ab6d-4b5f-8ffd-5fc0a13efdba" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:update doc:name="Updating user details" doc:id="2536cc34-d4d0-46ea-8a95-4ff5bb2bb7c4" config-ref="Database_Config">
+			<db:sql ><![CDATA[Update nrs.USER set PHONE_NUMBER= :PHONE_NUMBER where user_id= :USER_ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+PHONE_NUMBER :payload.PHONE_NUMBER,
+USER_ID: attributes.uriParams.user_id
+
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform to json with message" doc:id="eabb94c5-dfb8-4088-b85f-210e6facb66a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "Your phone number is updated successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="1de89183-8427-496d-b28d-f82305bdfeb5" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="getuserFlow" doc:id="fcd39e83-357e-49d9-a540-616fa2682b56">
+		<json-logger:logger doc:name="Start Logger" doc:id="2c378aa7-65c4-4ec3-ab2d-aef8bfa35d1e" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:select doc:name="Selecting user details" doc:id="0896099e-c7c4-4dfb-8612-1dbee0415615" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from nrs.USER where user_id=:USER_ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+
+USER_ID: attributes.uriParams.user_id
+
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transforming payload to json" doc:id="61f439d6-6836-4d23-a157-5c5c2c854e2c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				<ee:set-attributes ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-attributes>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="d58f4417-5460-462a-8e29-524e2486a9e8" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="deleteuserFlow" doc:id="495c9a8b-bdf8-405c-8c47-b20b6da260d4" >
+		<json-logger:logger doc:name="Start Logger" doc:id="bfa0da85-7fc4-45dd-a761-184ce009d25d" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:delete doc:name="Deleting user details" doc:id="723b7d76-aca5-4900-b2d4-78f1d5201a4e" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from nrs.USER where(user_id=:USER_ID)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	USER_ID:attributes.uriParams.user_id
+	}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transforming to json with message" doc:id="53692111-1cb7-4e6f-9747-533a6f9412f9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "Your user account is deleted"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="2dc00eec-52a8-418f-bf3d-5d7f74502b99" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="subscriptionFlow" doc:id="f29e3c93-f0b2-441d-8d0c-3a8b002b70e7" >
+		<json-logger:logger doc:name="Start Logger" doc:id="c3b6fb97-8f8f-490c-b6d2-cf1ddd78d17c" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:insert doc:name="Inserting subscription details" doc:id="9367515e-b07b-4351-bd95-8934d5d17930" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into nrs.SUBSCRIPTION(SUBSCRIPTION_ID,USER_ID,STATUS_TYPE_ID,SOURCE_LOCATION,DESTINATION_LOCATION,FROM_TIME,TO_TIME,ADVANCE_NOTIFY_TIME_MIN) values(:SUBSCRIPTION_ID,:USER_ID,:STATUS_TYPE_ID,:SOURCE_LOCATION,:DESTINATION_LOCATION,:FROM_TIME,:TO_TIME,:ADVANCE_NOTIFY_TIME_MIN)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+SUBSCRIPTION_ID:payload.SUBSCRIPTION_ID,
+USER_ID:payload.USER_ID,
+STATUS_TYPE_ID:payload.STATUS_TYPE_ID,
+SOURCE_LOCATION:payload.SOURCE_LOCATION,
+DESTINATION_LOCATION:payload.DESTINATION_LOCATION,
+FROM_TIME:payload.FROM_TIME,
+TO_TIME:payload.TO_TIME,
+ADVANCE_NOTIFY_TIME_MIN:payload.ADVANCE_NOTIFY_TIME_MIN
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform to json with message" doc:id="36079552-89f0-432b-9d10-fc0a7274da10" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"Message": "Your subscription details are added"}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="d36d5f9a-6d57-4aa2-a31c-e97fba0624b4" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="getsubscriptionFlow" doc:id="2360bb68-b72b-40a4-9c27-07ffc5c33a6f" >
+		<json-logger:logger doc:name="Start Logger" doc:id="554c3111-2eca-498e-aa4d-25c867b93e3d" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:select doc:name="Selecting subscription details" doc:id="be29f91e-2aa7-4b11-b888-b36c9bb7ecef" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from nrs.SUBSCRIPTION where user_id=:USER_ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+USER_ID:attributes.uriParams.user_id
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transforming payload to json" doc:id="4c8bf69c-9127-4d33-a24f-8262b0ec7de2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				<ee:set-attributes ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-attributes>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="8364ce5f-5957-4ede-a89b-26e01baf65ac" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="updatesubscriptionFlow" doc:id="4b3ab15e-b119-455d-84ba-2341ddf2e5bc" >
+		<json-logger:logger doc:name="Start Logger" doc:id="bfe05603-df4f-4a1e-a16f-4d31ebcccdf1" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:update doc:name="Updating subscription details" doc:id="19c850d5-5136-4f29-a283-9d70526feac3" config-ref="Database_Config">
+			<db:sql ><![CDATA[Update nrs.SUBSCRIPTION set SOURCE_LOCATION=:SOURCE_LOCATION,DESTINATION_LOCATION=:DESTINATION_LOCATION,FROM_TIME=:FROM_TIME,TO_TIME=:TO_TIME,STATUS_TYPE_ID=:STATUS_TYPE_ID where user_id=:USER_ID and subscription_id=:SUBSCRIPTION_ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+
+SOURCE_LOCATION:payload.SOURCE_LOCATION,
+DESTINATION_LOCATION:payload.DESTINATION_LOCATION,
+FROM_TIME:payload.FROM_TIME,
+TO_TIME:payload.TO_TIME,
+STATUS_TYPE_ID:payload.STATUS_TYPE_ID,
+USER_ID:attributes.uriParams.user_id,
+SUBSCRIPTION_ID:attributes.uriParams.subscription_id
+
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform to json with message" doc:id="5f0f7bd5-687a-491b-a797-081d5d15c190" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "Your subscription details are updated"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="1380f3c3-6244-423e-8dc9-acfef0ade19e" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="deletesubscriptionFlow" doc:id="8d16e638-af4c-4a85-a89e-c00d452c6414" >
+		<json-logger:logger doc:name="Start Logger" doc:id="31d4b8ee-0d0b-4faf-b878-16a15a5479e9" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:delete doc:name="Deleting subscription details" doc:id="282eb14a-74e1-4438-a082-72f78c182553" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from nrs.SUBSCRIPTION where(subscription_id=:SUBSCRIPTION_ID and user_id=:USER_ID)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	SUBSCRIPTION_ID:attributes.uriParams.subscription_id,
+	USER_ID:attributes.uriParams.user_id
+	
+	}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transforming to json with message" doc:id="ac66939f-580d-48e7-937a-1a2d66b0c038" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "Your subscription account is deleted"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="2c9ee5c7-491e-4af7-ae59-9afc5a0a994c" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="alertFlow" doc:id="9cd71328-fcb3-4712-9c84-9f40b6f766ae" >
+		<json-logger:logger doc:name="Start Logger" doc:id="cb5401ee-8989-41da-96da-e86714c384bc" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:insert doc:name="Inserting into alerts table" doc:id="86e597e0-cbf6-462c-abf2-c4653b35b73a" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT into nrs.ALERT(ALERT_TRANSACTION_ID,SUBSCRIPTION_ID,DELAY_TYPE_FLAG,NOTIFICATION_STATUS,NOTIFICATION_FAILURE_DETAIL,DELAY_TIME) values(:ALERT_TRANSACTION_ID,:SUBSCRIPTION_ID,:DELAY_TYPE_FLAG,:NOTIFICATION_STATUS,:NOTIFICATION_FAILURE_DETAIL,:DELAY_TIME)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+ALERT_TRANSACTION_ID:payload.ALERT_TRANSACTION_ID,
+SUBSCRIPTION_ID:payload.SUBSCRIPTION_ID,
+DELAY_TYPE_FLAG:payload.DELAY_TYPE_FLAG,
+NOTIFICATION_STATUS:payload.NOTIFICATION_STATUS,
+NOTIFICATION_FAILURE_DETAIL:payload.NOTIFICATION_FAILURE_DETAIL,
+DELAY_TIME:payload.DELAY_TIME
+
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transforming to json with message" doc:id="01783064-1c52-47a9-aba9-b47b4a6c7b67" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "You have inserted details to alert table"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="3a9420c8-38f4-46e9-b495-25421e363753" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="getalertdetailsFlow" doc:id="3feea31a-eefc-45dd-9b15-84910b7fb451" >
+		<json-logger:logger doc:name="Start Logger" doc:id="9a337206-0203-4897-b925-d6b65d8fa093" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:select doc:name="Selecting alert and subscription details" doc:id="2b78b88a-db46-41cb-92e0-d4cbd7c3e56c" config-ref="Database_Config">
+			<db:sql ><![CDATA[
+
+select SOURCE_LOCATION,DESTINATION_LOCATION,FROM_TIME,TO_TIME,NOTIFICATION_STATUS,ALERT_TRANSACTION_ID,DELAY_TYPE_FLAG,NOTIFICATION_FAILURE_DETAIL,DELAY_TIME from nrs.SUBSCRIPTION JOIN nrs.ALERT on SUBSCRIPTION.SUBSCRIPTION_ID = ALERT.SUBSCRIPTION_ID
+ where SOURCE_LOCATION = :SOURCE_LOCATION and DESTINATION_LOCATION = :DESTINATION_LOCATION and FROM_TIME = :FROM_TIME and TO_TIME = :TO_TIME ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	SOURCE_LOCATION: payload.SOURCE_LOCATION,
+	FROM_TIME: payload.FROM_TIME,
+	TO_TIME: payload.TO_TIME,
+	DESTINATION_LOCATION: payload.DESTINATION_LOCATION
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transforming payload to json" doc:id="bb040d6f-2070-4aca-881e-4d36ad1fc9a0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="3d56a2c9-c6a2-4cf2-b6c4-23a7c4f65efe" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+	<flow name="getsubscribedusersFlow" doc:id="1b042d82-d2c9-41c9-bf31-9741ecee4638" >
+		<json-logger:logger doc:name="Start Logger" doc:id="15277248-f5b8-4f97-acf3-bbb28ad4aee6" config-ref="JSON_Logger_Config" message="Start Logger" />
+		<db:select doc:name="selecting subscription and user table" doc:id="03e310b3-46bb-4dcc-9368-b269e18a2309" config-ref="Database_Config">
+			<db:sql ><![CDATA[select FIRST_NAME,LAST_NAME,EMAIL_ID,PHONE_NUMBER,USER.STATUS_TYPE_ID,SUBSCRIPTION_ID,SOURCE_LOCATION,DESTINATION_LOCATION,FROM_TIME,TO_TIME from nrs.USER JOIN nrs.SUBSCRIPTION on USER.USER_ID = SUBSCRIPTION.USER_ID where USER.STATUS_TYPE_ID = 1 ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transforming payload to json" doc:id="eff0365f-7082-47e1-afef-5c33d00943b7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End Logger" doc:id="00b1ebf0-4424-46fe-8668-05e94d673622" config-ref="JSON_Logger_Config" message="End Logger" tracePoint="END" />
+	</flow>
+</mule>

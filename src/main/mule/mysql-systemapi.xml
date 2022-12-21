@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+   
+	<flow name="mysql-systemapi-main">
+        <http:listener path="/api/*" config-ref="HTTP_Listener_config">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="mysql-systemapi-config" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="mysql-systemapi-console">
+        <http:listener path="/console/*" config-ref="HTTP_Listener_config">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="mysql-systemapi-config" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="put:\user\(user_id)\subscription\(subscription_id):application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to updatesubscriptionFlow" doc:id="85ab0891-4197-4dc1-89f7-6b61453e7a68" name="updatesubscriptionFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="put:\user\(user_id)\updateuser:application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to updateuserFlow" doc:id="865a7a34-c2eb-4aa4-a205-17a3b062b927" name="updateuserFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="delete:\user\(user_id):mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to deleteuserFlow" doc:id="4a56f20c-8d8f-4598-8414-97fb19039fff" name="deleteuserFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="delete:\user\(user_id)\subscription\(subscription_id):mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to deletesubscriptionFlow" doc:id="55c9fd21-641c-41a4-8b52-dad8b0d1f70e" name="deletesubscriptionFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="get:\getsubscribedusers:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to getsubscribedusersFlow" doc:id="19956458-7d2d-4ba1-a35a-27816d8a6537" name="getsubscribedusersFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="get:\user\(user_id):mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to getuserFlow" doc:id="623480f7-989c-44d2-8077-4cee93124473" name="getuserFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="get:\user\(user_id)\subscription:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to getsubscriptionFlow" doc:id="67e7e029-de07-49e2-b8b4-cf86b91ce62c" name="getsubscriptionFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="post:\alert\alertuserdetails:application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to getalertdetailsFlow" doc:id="69059d1e-41d4-4ecc-94bf-330f48e4f98e" name="getalertdetailsFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="post:\alert:application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to alertFlow" doc:id="c8bf7513-1750-4eec-8c3c-2828403c7367" name="alertFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="post:\subscriptions:application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to subscriptionFlow" doc:id="679848b1-678d-4906-bcdc-a735070b075a" name="subscriptionFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+    <flow name="post:\user:application\json:mysql-systemapi-config">
+        <flow-ref doc:name="Flow Reference to userFlow" doc:id="156f4f9e-1dfa-44fd-add8-3093b03a2cd7" name="userFlow" />
+		<error-handler ref="errorhandlingError_Handler" />
+    </flow>
+</mule>

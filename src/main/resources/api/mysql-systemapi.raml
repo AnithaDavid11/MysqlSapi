@@ -1,0 +1,193 @@
+#%RAML 1.0
+title: Mysql-SystemAPI
+description: "This API is used to create tables in MySQL"
+traits: 
+ error:  !include exchange_modules/0bb8c408-0feb-47de-9914-f4d45820596c/errorcodes/1.0.0/errorcodes.raml
+
+uses:
+  mysql-library: /exchange_modules/0bb8c408-0feb-47de-9914-f4d45820596c/mysql-systemapi/1.0.4/mysql-datatype.raml
+
+/user:
+  post:
+    description: "This table is to create user details"
+    is:
+       - error
+    body:
+      application/json:
+        type: mysql-library.user
+    responses:
+      201:
+        description: "Success response for register user "
+        body:
+          application/json:
+            type : string
+            example: "Message: Your details are added to user table"
+    
+/user/{user_id}/updateuser:
+  put:
+    description: "Updating user"
+    is:
+      - error
+    body:
+      application/json:
+        properties:
+         PHONE_NUMBER:
+           type: number
+           example: 98765432
+    responses:
+      200:
+        description: "Success response for updating user"
+        body:
+          application/json:
+            type: string
+            example: "Your phone number is updated"
+        
+/user/{user_id}:
+  get:
+    is:
+      - error
+    description: "Getting user details with user id"
+    responses:
+      200:
+        body:
+          application/json:
+            type: mysql-library.user
+  delete:
+    description : "Deleting user details"
+    responses:
+      202:
+        body:
+          application/json:
+            example: "Message: User details are deleted"
+
+/subscriptions:
+  post:
+    description: "This table is to create subscription details"
+    is:
+       - error
+    body:
+      application/json:
+        type: mysql-library.subscription
+    responses:
+      201:
+        description: "Success response for subscription table"
+        body:
+          application/json:
+            type : string
+            example: "Message: Your details are added to subscription table"
+
+
+  
+
+/user/{user_id}/subscription/{subscription_id}:
+  put:
+    description: "Updating subscription details"
+    is:
+      - error
+    body:
+      application/json:
+        properties:
+         SOURCE_LOCATION:
+          type: string
+         DESTINATION_LOCATION:
+           type: string
+         FROM_TIME:
+           type: time-only
+         TO_TIME:
+           type: time-only
+         STATUS_TYPE_ID:
+           type: number
+    responses:
+      200:
+        description: "Success response of update subscriptions"
+        body:
+          application/json:
+            type: string
+            example: "Message: Your details are updated"
+ 
+
+  delete:
+      description : "Deleting subscription details"
+      responses:
+        202:
+         body:
+          application/json:
+            example: "Message: Subscription details are deleted"
+            
+/user/{user_id}/subscription:       
+ get:
+    description: "View subscription details"
+    is:
+      - error
+    responses:
+     200:
+       body:
+         application/json:
+           type: mysql-library.subscription
+
+/getsubscribedusers:
+  get:
+    description: "Getting subscribed user details"
+    is:
+      - error
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+             FIRST_NAME:
+                 type: string
+             LAST_NAME:
+                 type: string
+             USER_ID:
+                 type: string
+             SUBSCRIPTION_ID:
+                 type: number
+             PHONE_NUMBER:
+                 type: number
+               
+
+/alert:
+  post:
+    description: "This table is to create Alert details"
+    is:
+       - error
+    body:
+      application/json:
+        type: mysql-library.alert
+    responses:
+      201:
+        description: "Success response for alert table"
+        body:
+          application/json:
+            type : string
+            example: "Message: Your details are added to alert table"
+
+/alert/alertuserdetails:
+  post:
+    is:
+      - error
+    description: "Alerting users for train delays"
+    body:
+     application/json:
+      type: object
+      properties:
+           SOURCE_LOCATION:
+             type: string
+           DESTINATION_LOCATION:
+             type: string
+           FROM_TIME:
+             type: time-only
+           TO_TIME:
+             type: time-only
+     
+    responses:
+      201:
+        body:
+         application/json:
+           type : mysql-library.alert   
+ 
+
+    
+

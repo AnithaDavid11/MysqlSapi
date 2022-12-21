@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="mysql-systemapi-test-suite.xml" />
+	<munit:test name="mysql-systemapi-test-suite-mysql-systemapi-mainTest" doc:id="5c27dc95-bfd2-4eb2-9929-2da92faaafec" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="48e048e2-864a-4d31-8153-6e53b14b0ec9" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mysql-systemapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mysql-systemapi-main" doc:id="9b5c28bc-c4d1-4367-9fdb-77017a850945" name="mysql-systemapi-main"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-mysql-systemapi-consoleTest" doc:id="32a6c53d-5a67-4cb1-9c07-1eea86d5fda6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d32a704a-d685-4dd1-be63-8f07b91f13ea" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mysql-systemapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mysql-systemapi-console" doc:id="c9226997-e075-4c71-bad2-b829fc0f0657" name="mysql-systemapi-console"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-mysql-systemapi-error-mainTest" doc:id="1327d316-afd6-41a0-aa8e-d95804d333d4" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bf87e3e3-a9c3-4e8f-a0a4-4714580e0e9f" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mysql-systemapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="0b6a1149-46e4-4e4e-8bb7-27a27b3df880" >
+				<flow-ref doc:name="Flow-ref to mysql-systemapi-main" doc:id="2363739b-ca82-4d84-8564-611a4f85b0ed" name="mysql-systemapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="797a37dd-26dc-4434-a5b3-362abc6bd3b6" >
+						<logger level="INFO" doc:name="Logger" doc:id="eea8d98a-cc3c-4117-b0c2-4f75fd68ce93" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="edfd5b05-5f0b-418f-b48b-89c5c0b8fcf8" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-put:\user\(user_id)\subscription\(subscription_id):application\json:mysql-systemapi-configTest" doc:id="2ce62aea-2604-4573-bac7-7a60ac6608bc" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c39c861c-d905-47f1-a70c-63e317843600" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to updatesubscriptionFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="85ab0891-4197-4dc1-89f7-6b61453e7a68" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="updatesubscriptionFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\user\(user_id)\subscription\(subscription_id):application\json:mysql-systemapi-config" doc:id="cef6a777-ef09-4da5-826f-6888fedd95a8" name="put:\user\(user_id)\subscription\(subscription_id):application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-put:\user\(user_id)\updateuser:application\json:mysql-systemapi-configTest" doc:id="07884306-36f0-4b1c-9533-207b35aec44b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0d736116-85b7-4bd7-ae91-dc8d91778567" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to updateuserFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="865a7a34-c2eb-4aa4-a205-17a3b062b927" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="updateuserFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\user\(user_id)\updateuser:application\json:mysql-systemapi-config" doc:id="e644c978-e726-42ae-bf20-8384559a4ad5" name="put:\user\(user_id)\updateuser:application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-delete:\user\(user_id):mysql-systemapi-configTest" doc:id="96c53ca6-1b28-4a02-ba7e-ba1d9e595288" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="118a8cbb-a0a0-4f18-9351-5fd030f567e5" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to deleteuserFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="4a56f20c-8d8f-4598-8414-97fb19039fff" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="deleteuserFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\user\(user_id):mysql-systemapi-config" doc:id="7b7ce7af-61f9-4f5f-a28f-d7f9f6cdd3e1" name="delete:\user\(user_id):mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-delete:\user\(user_id)\subscription\(subscription_id):mysql-systemapi-configTest" doc:id="602e111f-51d3-49b8-a927-af77afd5dc44" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b90a06f7-61e0-49bc-bfde-dcb17cf37b64" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to deletesubscriptionFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="55c9fd21-641c-41a4-8b52-dad8b0d1f70e" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="deletesubscriptionFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\user\(user_id)\subscription\(subscription_id):mysql-systemapi-config" doc:id="6f9daf39-7628-4a76-be3d-d999f2175754" name="delete:\user\(user_id)\subscription\(subscription_id):mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-get:\getsubscribedusers:mysql-systemapi-configTest" doc:id="ab9a16fc-12a6-4c66-a545-3e23c7cd2469" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e30d9ba3-670b-48d2-afcd-f913f5173b40" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to getsubscribedusersFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="19956458-7d2d-4ba1-a35a-27816d8a6537" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="getsubscribedusersFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\getsubscribedusers:mysql-systemapi-config" doc:id="4e8dbf5f-dfcf-4758-b866-8e50a61e0d59" name="get:\getsubscribedusers:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-get:\user\(user_id):mysql-systemapi-configTest" doc:id="a868ae3a-0849-42f9-a48d-37c41184949c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d6f05897-79eb-4352-bad9-21bee24f3d42" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to getuserFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="623480f7-989c-44d2-8077-4cee93124473" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="getuserFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\user\(user_id):mysql-systemapi-config" doc:id="b4f7ed40-5eb6-4607-a7d9-edf6dfa40722" name="get:\user\(user_id):mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-get:\user\(user_id)\subscription:mysql-systemapi-configTest" doc:id="8137cb81-eebd-4530-8167-f87f4da84ad4" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="79d6da71-4d5c-44fd-8ff6-1720f0874959" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to alertFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="c8bf7513-1750-4eec-8c3c-2828403c7367" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="alertFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\user\(user_id)\subscription:mysql-systemapi-config" doc:id="8d8ce87d-c473-4261-a1d4-81a1338cdf71" name="get:\user\(user_id)\subscription:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-post:\alert\alertuserdetails:application\json:mysql-systemapi-configTest" doc:id="6b6056c2-d365-4c75-a9f3-b83bbc64c7c3" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d3b2b01b-fa5c-49f8-b588-730a2098ae9e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to getalertdetailsFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="69059d1e-41d4-4ecc-94bf-330f48e4f98e" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="getalertdetailsFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\alert\alertuserdetails:application\json:mysql-systemapi-config" doc:id="ae6c5bda-caa3-45d7-9bcd-3b17e8e57120" name="post:\alert\alertuserdetails:application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-post:\alert:application\json:mysql-systemapi-configTest" doc:id="238d4f39-2991-46d2-82ce-18025feda5ae" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b81e4f48-22fd-45bf-af97-ccc6f69f9271" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to alertFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="c8bf7513-1750-4eec-8c3c-2828403c7367" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="alertFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\alert:application\json:mysql-systemapi-config" doc:id="554e529c-973b-4f74-9531-a717debe71d6" name="post:\alert:application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-post:\subscriptions:application\json:mysql-systemapi-configTest" doc:id="3ff7f780-bcd8-4955-a9f9-33824d75f8f1" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1b7ca30c-057b-4017-bcdd-786ac8584311" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to subscriptionFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="679848b1-678d-4906-bcdc-a735070b075a" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="subscriptionFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\subscriptions:application\json:mysql-systemapi-config" doc:id="accedb14-3f86-4a2a-af99-859d5dd444b5" name="post:\subscriptions:application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="mysql-systemapi-test-suite-post:\user:application\json:mysql-systemapi-configTest" doc:id="9b51b41a-234e-472b-815a-63861840b62d" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="fd75bede-affe-435b-92a9-1e432ca0731e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Flow Reference to userFlow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="156f4f9e-1dfa-44fd-add8-3093b03a2cd7" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="userFlow" attributeName="name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\user:application\json:mysql-systemapi-config" doc:id="4f162c59-09a8-4412-95cb-b02a6c149873" name="post:\user:application\json:mysql-systemapi-config"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>

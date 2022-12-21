@@ -1,0 +1,17 @@
+mule:
+ env: "dev"
+
+json:
+ logger:
+  application:
+   name: "Mysql-API"
+   version: "v1"
+   
+db:
+ host : '![ahBgbPjOA3ofN0nycQ+QcA==]'
+ port : '![6ooBHAR7ugc=]'
+ user : '![FjwoRwthSSI=]'
+ password : '![2VrLW4PVB/t1a6mDLNCEGg==]'
+ database : '![73QzgXo5JOg=]'
+ 
+
